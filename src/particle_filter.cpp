@@ -31,9 +31,9 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
   particles.resize(num_particles);
 
   default_random_engine rnd;
-  normal_distribution gen_x(x, std[0]);
-  normal_distribution gen_y(y, std[1]);
-  normal_distribution gen_theta(theta, std[2]);
+  normal_distribution<double> gen_x(x, std[0]);
+  normal_distribution<double> gen_y(y, std[1]);
+  normal_distribution<double> gen_theta(theta, std[2]);
 
   // for (unsigned int p=0; p < num_particles; p++)
   // {
@@ -59,9 +59,9 @@ void ParticleFilter::prediction(double dt, double std_pos[], double velocity, do
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
 
   default_random_engine rnd;
-  normal_distribution noise_x(0, std_pos[0]);
-  normal_distribution noise_y(0, std_pos[1]);
-  normal_distribution noise_theta(0, std_pos[2]);
+  normal_distribution<double> noise_x(0, std_pos[0]);
+  normal_distribution<double> noise_y(0, std_pos[1]);
+  normal_distribution<double> noise_theta(0, std_pos[2]);
 
   for (Particle& prtcl : particles)
   {
@@ -141,7 +141,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
       if (min_dist < sensor_range) {
         // save map landmark ID of closest landmark
-        assoc.push_back(landmark_idx[idx].id_i);
+        assoc.push_back(landmark_list[idx].id_i);
 
         // save xy location of observation closest to a map landmark
         sense_x.push_back(plm.x);
@@ -176,14 +176,16 @@ void ParticleFilter::resample() {
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
 
   // Create array of particle weights
-  double prtclWeight[num_particles];
+  vector<double> prtclWeights;
+  prtclWeights.resize(num_particles);
 
   for (unsigned int p=0; p<num_particles; p++)
-    prtclWeight[p] = particles[p].weight;
+    prtclWeights[p] = particles[p].weight;
 
   // create a discrete distribution for re-sampling particles
   default_random_engine rnd;
-  discrete_distribution<int> probableParticleIdx(prtclWeights);
+  discrete_distribution<int> probableParticleIdx(prtclWeights.begin(), prtclWeights.end());
+
 
   // resample particles
   auto newParticles = particles;
