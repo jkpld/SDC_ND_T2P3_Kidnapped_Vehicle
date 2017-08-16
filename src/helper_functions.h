@@ -57,15 +57,10 @@ inline double dist2(double x1, double y1, double x2, double y2) {
 	return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 }
 
-inline double dist2(double x1, double y1, double x2, double y2, double s1, double s2) {
+inline double Nxy(double x1, double y1, double x2, double y2, double s1, double s2) {
   double dx = (x2-x1)/s1;
   double dy = (y2-y1)/s2;
-	return dx*dx + dy*dy;
-}
-
-inline double Nxy(double x1, double y1, double x2, double y2, double s1, double s2) {
-  double arg = dist2(x1, y1, x2, y2, s1, s2);
-  return exp(-0.5*arg)/(2.0*M_PI*s1*s2);
+  return exp(-0.5*(dx*dx+dy*dy))/(2.0*M_PI*s1*s2);
 }
 
 inline double * getError(double gt_x, double gt_y, double gt_theta, double pf_x, double pf_y, double pf_theta) {
